@@ -5,7 +5,7 @@ import { getServerConfig } from "./config";
 export async function startServer(): Promise<void> {
   const config = getServerConfig();
 
-  const server = new YapiMcpServer(config.yapiBaseUrl, config.yapiToken);
+  const server = new YapiMcpServer(config.yapiBaseUrl, config.yapiToken, config.yapiCookie);
 
   // Check if we're running in stdio mode (e.g., via CLI)
   const isStdioMode = process.env.NODE_ENV === "cli" || process.argv.includes("--stdio");

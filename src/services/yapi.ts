@@ -93,10 +93,12 @@ export interface SearchResponse extends BaseResponse {
 export class YApiService {
   private readonly baseUrl: string;
   private readonly token: string;
+  private readonly cookie: string;
 
-  constructor(baseUrl: string, token: string) {
+  constructor(baseUrl: string, token: string, cookie: string) {
     this.baseUrl = baseUrl;
     this.token = token;
+    this.cookie = cookie;
   }
 
   private async request<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
@@ -105,7 +107,10 @@ export class YApiService {
       const response = await axios.get(`${this.baseUrl}${endpoint}`, {
         params: {
           ...params,
-          token: this.token, // YApi要求在请求参数中传递token
+          ...(this.token ? { token: this.token } : {}),
+        },
+        headers: {
+          Cookie: `${this.cookie}`, // 将token作为Cookie发送
         },
       });
 

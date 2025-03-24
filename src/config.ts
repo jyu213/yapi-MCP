@@ -8,10 +8,12 @@ config();
 interface ServerConfig {
   yapiBaseUrl: string;
   yapiToken: string;
+  yapiCookie: string;
   port: number;
   configSources: {
     yapiBaseUrl: "cli" | "env" | "default";
     yapiToken: "cli" | "env" | "default";
+    yapiCookie: "cli" | "env" | "default";
     port: "cli" | "env" | "default";
   };
 }
@@ -24,6 +26,7 @@ function maskApiKey(key: string): string {
 interface CliArgs {
   "yapi-base-url"?: string;
   "yapi-token"?: string;
+  "yapi-cookie"?: string;
   port?: number;
 }
 
@@ -39,6 +42,10 @@ export function getServerConfig(): ServerConfig {
         type: "string",
         description: "YApi服务器授权Token",
       },
+      "yapi-cookie": {
+        type: "string",
+        description: "YApi服务器Cookie",
+      },
       port: {
         type: "number",
         description: "Port to run the server on",
@@ -50,14 +57,15 @@ export function getServerConfig(): ServerConfig {
   const config: ServerConfig = {
     yapiBaseUrl: "http://localhost:3000",
     yapiToken: "",
+    yapiCookie: "",
     port: 3333,
     configSources: {
       yapiBaseUrl: "default",
       yapiToken: "default",
+      yapiCookie: "default",
       port: "default",
     },
   };
-
 
   // Handle YAPI_BASE_URL
   if (argv["yapi-base-url"]) {
@@ -77,6 +85,15 @@ export function getServerConfig(): ServerConfig {
     config.configSources.yapiToken = "env";
   }
 
+  // Handle YAPI_COOKIE
+  if (argv["yapi-cookie"]) {
+    config.yapiCookie = argv["yapi-cookie"];
+    config.configSources.yapiCookie = "cli";
+  } else if (process.env.YAPI_COOKIE) {
+    config.yapiCookie = process.env.YAPI_COOKIE;
+    config.configSources.yapiCookie = "env";
+  }
+
   // Handle PORT
   if (argv.port) {
     config.port = argv.port;
@@ -93,6 +110,9 @@ export function getServerConfig(): ServerConfig {
   );
   console.log(
     `- YAPI_TOKEN: ${config.yapiToken ? maskApiKey(config.yapiToken) : "未配置"} (source: ${config.configSources.yapiToken})`,
+  );
+  console.log(
+    `- YAPI_COOKIE: ${config.yapiCookie ? maskApiKey(config.yapiCookie) : "未配置"} (source: ${config.configSources.yapiCookie})`,
   );
   console.log(`- PORT: ${config.port} (source: ${config.configSources.port})`);
   console.log(); // Empty line for better readability

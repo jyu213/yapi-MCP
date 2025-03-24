@@ -11,8 +11,8 @@ export class YapiMcpServer {
   private readonly yapiService: YApiService;
   private sseTransport: SSEServerTransport | null = null;
 
-  constructor(yapiBaseUrl: string, yapiToken: string) {
-    this.yapiService = new YApiService(yapiBaseUrl, yapiToken);
+  constructor(yapiBaseUrl: string, yapiToken: string, yapiCookie: string) {
+    this.yapiService = new YApiService(yapiBaseUrl, yapiToken, yapiCookie);
     this.server = new McpServer({
       name: "Yapi MCP Server",
       version: "0.1.0",
