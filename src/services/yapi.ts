@@ -19,20 +19,25 @@ export interface ApiInterface {
 export interface ProjectInfo {
   _id: string;
   name: string;
-  basepath: string;
   desc: string;
+  cat: Category[];
 }
 
 export interface Category {
   _id: string;
   name: string;
   desc: string;
+  list: ApiListItem[];
 }
 
 export interface ApiListItem {
   _id: string;
   title: string;
-  projectId: string;
+  projectId?: string;
+  type: string;
+  method: string;
+  path: string;
+  project_id?: string;
 }
 
 export interface ApiMenu {
@@ -147,9 +152,9 @@ export class YApiService {
    * 获取项目基本信息
    * 路径: /api/project/get
    */
-  async getProjectInfo(): Promise<ProjectInfo> {
+  async getProjectInfo(id: string): Promise<ProjectInfo> {
     try {
-      const response = await this.request<GetProjectResponse>("/api/project/get");
+      const response = await this.request<GetProjectResponse>("/api/project/get", { id });
 
       if (response.errcode !== 0) {
         throw new Error(response.errmsg || "获取项目信息失败");
@@ -169,7 +174,7 @@ export class YApiService {
    */
   async getCatMenu(project_id: string): Promise<Category[]> {
     try {
-      const response = await this.request<GetCatMenuResponse>("/api/interface/getCatMenu", {
+      const response = await this.request<GetCatMenuResponse>("/api/interface/list_menu", {
         project_id,
       });
 

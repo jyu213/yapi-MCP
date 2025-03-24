@@ -74,29 +74,40 @@ export class YapiMcpServer {
     );
 
     // 获取项目基本信息
-    this.server.tool("get_project_info", "获取YApi项目的基本信息", {}, async () => {
-      try {
-        console.log("获取项目基本信息");
-        const projectInfo = await this.yapiService.getProjectInfo();
-        console.log(`成功获取项目信息: ${projectInfo.name}`);
+    this.server.tool(
+      "get_project_info",
+      "获取YApi项目的基本信息",
+      {
+        projectId: z.string().describe("项目ID"),
+      },
+      async ({ projectId }) => {
+        try {
+          console.log("获取项目基本信息");
+          const projectInfo = await this.yapiService.getProjectInfo(projectId);
+          console.log(`成功获取项目信息: ${projectInfo.name}`);
 
-        const formattedResponse = {
-          项目ID: projectInfo._id,
-          项目名称: projectInfo.name,
-          项目描述: projectInfo.desc,
-          基础路径: projectInfo.basepath,
-        };
+          const formattedResponse = {
+            项目ID: projectInfo._id,
+            项目名称: projectInfo.name,
+            项目描述: projectInfo.desc,
+            分类列表: projectInfo.cat.map((cat) => ({
+              分类ID: cat._id,
+              分类名称: cat.name,
+              分类描述: cat.desc,
+            })),
+          };
 
-        return {
-          content: [{ type: "text", text: JSON.stringify(formattedResponse, null, 2) }],
-        };
-      } catch (error) {
-        console.error("获取项目信息时出错:", error);
-        return {
-          content: [{ type: "text", text: `获取项目信息出错: ${error}` }],
-        };
-      }
-    });
+          return {
+            content: [{ type: "text", text: JSON.stringify(formattedResponse, null, 2) }],
+          };
+        } catch (error) {
+          console.error("获取项目信息时出错:", error);
+          return {
+            content: [{ type: "text", text: `获取项目信息出错: ${error}` }],
+          };
+        }
+      },
+    );
 
     // 获取菜单列表
     this.server.tool(
@@ -115,6 +126,12 @@ export class YapiMcpServer {
             分类ID: category._id,
             分类名称: category.name,
             分类描述: category.desc,
+            接口列表: category.list.map((item) => ({
+              接口ID: item._id,
+              接口路径: item.title,
+              接口类型: item.type,
+              项目ID: item.projectId,
+            })),
           }));
 
           return {
@@ -152,8 +169,8 @@ export class YapiMcpServer {
             接口列表: listResult.list.map((item) => ({
               接口ID: item._id,
               接口名称: item.title,
-              接口路径: item.path,
-              请求方式: item.method,
+              接口类型: item.type,
+              项目ID: item.projectId,
             })),
           };
 
@@ -192,8 +209,9 @@ export class YapiMcpServer {
             接口列表: listResult.list.map((item) => ({
               接口ID: item._id,
               接口名称: item.title,
+              接口类型: item.type || item.method,
               接口路径: item.path,
-              请求方式: item.method,
+              项目ID: item.projectId || item.project_id,
             })),
           };
 
@@ -268,7 +286,7 @@ export class YapiMcpServer {
             })),
             接口列表: projects.interface.map((item) => ({
               接口ID: item._id,
-              接口路径: item.title,
+              接口标题: item.title,
               项目id: item.projectId,
             })),
           };
