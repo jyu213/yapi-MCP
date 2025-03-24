@@ -1,10 +1,10 @@
 {
   "name": "yapi-mcp",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Model Context Protocol server for yapi integration",
   "main": "dist/index.js",
   "bin": {
-    "figma-developer-mcp": "./dist/cli.js"
+    "yapi-mcp": "./dist/cli.js"
   },
   "files": [
     "dist",
@@ -29,14 +29,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/GLips/Figma-Context-MCP.git"
+    "url": "https://github.com/jyu213/yapi-MCP.gits"
   },
   "keywords": [
     "yapi",
     "mcp",
     "typescript"
   ],
-  "author": "",
+  "author": "jyu213",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.0",

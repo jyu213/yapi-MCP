@@ -267,7 +267,7 @@ export class YapiMcpServer {
     // 搜索项目
     this.server.tool(
       "search_projects",
-      "搜索YApi项目",
+      "搜索YApi项目，通常作为工作流的第一步，通过 api path 获取到实际接口 id，再调用 get_api_desc 获取接口详细信息",
       {
         q: z.string().describe("搜索API关键词"),
       },
