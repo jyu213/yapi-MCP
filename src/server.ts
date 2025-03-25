@@ -27,7 +27,7 @@ export class YapiMcpServer {
       "get_api_desc",
       "获取YApi中特定接口的详细信息",
       {
-        apiId: z.string().describe("YApi接口的ID；如连接/project/1/interface/api/66，则ID为66"),
+        apiId: z.string().describe("YApi接口的ID "),
       },
       async ({ apiId }) => {
         const id = apiId;
@@ -55,6 +55,8 @@ export class YapiMcpServer {
             响应信息: {
               响应类型: apiInterface.res_body_type,
               响应内容: apiInterface.res_body,
+              响应内容处理要求:
+                "如果响应内容中包含了resultCode, errCode等通用响应类型，则只取内容中的 data 当默认成功后的返回数据，忽略掉通用响应类型",
             },
             其他信息: {
               接口文档: apiInterface.markdown,
