@@ -103,19 +103,5 @@ export function getServerConfig(): ServerConfig {
     config.configSources.port = "env";
   }
 
-  // Log configuration sources
-  console.log("\nConfiguration:");
-  console.log(
-    `- YAPI_BASE_URL: ${config.yapiBaseUrl} (source: ${config.configSources.yapiBaseUrl})`,
-  );
-  console.log(
-    `- YAPI_TOKEN: ${config.yapiToken ? maskApiKey(config.yapiToken) : "未配置"} (source: ${config.configSources.yapiToken})`,
-  );
-  console.log(
-    `- YAPI_COOKIE: ${config.yapiCookie ? maskApiKey(config.yapiCookie) : "未配置"} (source: ${config.configSources.yapiCookie})`,
-  );
-  console.log(`- PORT: ${config.port} (source: ${config.configSources.port})`);
-  console.log(); // Empty line for better readability
-
   return config;
 }

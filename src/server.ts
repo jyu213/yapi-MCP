@@ -32,9 +32,7 @@ export class YapiMcpServer {
       async ({ apiId }) => {
         const id = apiId;
         try {
-          console.log(`获取API接口: ${id}`);
           const apiInterface = await this.yapiService.getApiInterface(id);
-          console.log(`成功获取API接口: ${apiInterface.title || id}`);
 
           // 格式化返回数据，使其更易于阅读
           const formattedResponse = {
@@ -84,9 +82,7 @@ export class YapiMcpServer {
       },
       async ({ projectId }) => {
         try {
-          console.log("获取项目基本信息");
           const projectInfo = await this.yapiService.getProjectInfo(projectId);
-          console.log(`成功获取项目信息: ${projectInfo.name}`);
 
           const formattedResponse = {
             项目ID: projectInfo._id,
@@ -120,9 +116,7 @@ export class YapiMcpServer {
       },
       async ({ projectId }) => {
         try {
-          console.log(`获取项目 ${projectId} 的菜单列表`);
           const catMenu = await this.yapiService.getCatMenu(projectId);
-          console.log(`成功获取菜单列表，共 ${catMenu.length} 项`);
 
           const formattedResponse = catMenu.map((category) => ({
             分类ID: category._id,
@@ -159,11 +153,7 @@ export class YapiMcpServer {
       },
       async ({ catId, page = 1, limit = 10 }) => {
         try {
-          console.log(`获取分类 ${catId} 下的接口列表`);
           const listResult = await this.yapiService.getInterfaceListByCat(catId, page, limit);
-          console.log(
-            `成功获取分类接口列表，共 ${listResult.total} 项，当前页 ${listResult.list.length} 项`,
-          );
 
           const formattedResponse = {
             总数: listResult.total,
@@ -199,11 +189,7 @@ export class YapiMcpServer {
       },
       async ({ projectId, page = 1, limit = 10 }) => {
         try {
-          console.log(`获取项目 ${projectId} 的接口列表`);
           const listResult = await this.yapiService.getInterfaceList(projectId, page, limit);
-          console.log(
-            `成功获取项目接口列表，共 ${listResult.total} 项，当前页 ${listResult.list.length} 项`,
-          );
 
           const formattedResponse = {
             总数: listResult.total,
@@ -238,9 +224,7 @@ export class YapiMcpServer {
       },
       async ({ projectId }) => {
         try {
-          console.log(`获取项目 ${projectId} 的接口菜单列表`);
           const menuList = await this.yapiService.getInterfaceMenu(projectId);
-          console.log(`成功获取接口菜单列表，共 ${menuList.length} 个分类`);
 
           const formattedResponse = menuList.map((menu) => ({
             分类ID: menu._id,
@@ -275,11 +259,7 @@ export class YapiMcpServer {
       },
       async ({ q }) => {
         try {
-          console.log(`搜索YApi项目: ${q}`);
           const projects = await this.yapiService.searchProjects(q);
-          console.log(
-            `成功获取搜索结果，共 ${projects.project.length} 个项目， ${projects.interface.length} 个接口`,
-          );
 
           const formattedResponse = {
             项目列表: projects.project.map((project) => ({
@@ -315,8 +295,6 @@ export class YapiMcpServer {
       },
       async ({ endpoint, params }) => {
         try {
-          console.log(`调用YApi接口: ${endpoint}，参数:`, params);
-
           if (!(endpoint in this.yapiService)) {
             return {
               content: [{ type: "text", text: `错误: 未找到API ${endpoint}` }],
@@ -338,16 +316,13 @@ export class YapiMcpServer {
   }
 
   async connect(transport: Transport): Promise<void> {
-    console.log("Connecting to transport...");
     await this.server.connect(transport);
-    console.log("Server connected and ready to process requests");
   }
 
   async startHttpServer(port: number): Promise<void> {
     const app = express();
 
     app.get("/sse", async (req: Request, res: Response) => {
-      console.log("New SSE connection established");
       this.sseTransport = new SSEServerTransport(
         "/messages",
         res as unknown as ServerResponse<IncomingMessage>,
@@ -357,7 +332,7 @@ export class YapiMcpServer {
 
     app.post("/messages", async (req: Request, res: Response) => {
       if (!this.sseTransport) {
-        // @ts-expect-error Not sure why Express types aren't working
+        // @ts-ignore Not sure why Express types aren't working
         res.sendStatus(400);
         return;
       }
@@ -369,8 +344,6 @@ export class YapiMcpServer {
 
     app.listen(port, () => {
       console.log(`HTTP server listening on port ${port}`);
-      console.log(`SSE endpoint available at http://localhost:${port}/sse`);
-      console.log(`Message endpoint available at http://localhost:${port}/messages`);
     });
   }
 }

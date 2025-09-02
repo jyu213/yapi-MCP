@@ -11,16 +11,11 @@ export async function startServer(): Promise<void> {
   const isStdioMode = process.env.NODE_ENV === "cli" || process.argv.includes("--stdio");
 
   if (isStdioMode) {
-    console.log("Initializing Yapi MCP Server in stdio mode...");
     const transport = new StdioServerTransport();
     await server.connect(transport);
   } else {
-    console.log(`Initializing Yapi MCP Server in HTTP mode on port ${config.port}...`);
     await server.startHttpServer(config.port);
   }
-
-  console.log("\n可用工具:");
-  console.log("- get_api_desc: 获取YApi接口信息");
 }
 
 // If this file is being run directly, start the server
